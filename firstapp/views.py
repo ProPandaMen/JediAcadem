@@ -47,7 +47,8 @@ def masterdjedai(request):
 def watchtest(request, id):
     try:
         opentest = test.objects.all()
-        return render(request, "watctest.html", {"test": opentest, "people": candidat.objects.get(id=id)})
+        all = len(test.objects.all())
+        return render(request, "watctest.html", {"test": opentest, "people": candidat.objects.get(id=id), "all": all})
     except Person.DoesNotExist:
         return HttpResponseNotFound("<h2>Ошибка</h2>")
 
@@ -105,9 +106,10 @@ def send(request, master, id):
     padavadjed = djedai.objects.get(name=master)
     padavadjed.NumberPadawans += 1
     padavadjed.save()
-    letter = 'Мастер Джедай {0} взял к себе в ученики. Количество баллов за тест {1}. ' \
-                 'Поздравляю с вступление в орден и желаем дальнейших успехов'\
-            .format(master, test)
+    letter = (
+        'Мастер Джедай {0} взял к себе в ученики. Количество баллов за тест '
+        '{1}. Поздравляю с вступление в орден и желаем дальнейших успехов'
+    ).format(master, persons.NumberPoints)
     send_mail('Вы приняты в орден', letter, settings.EMAIL_HOST_USER, [persons.email])
     candidattest = candidat.objects.get(id=id)
     candidattest.delete()

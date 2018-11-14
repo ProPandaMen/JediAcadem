@@ -19,7 +19,7 @@
     <form method="POST" action="masterdjedaif">
         {% csrf_token %}
         <table>
-            <tr><th>мин кол-во учеников</th><th><input type="number" name="count" /></th></tr>
+            <tr><th>Мин кол-во учеников</th><th><input type="number" name="count" /></th></tr>
             <tr><th colspan="2"><input type="submit" value="Применить" ></th></tr>
         </table>
     </form>
@@ -34,12 +34,13 @@
         <input type="submit" value="Выбрать" >
 </form>
         <table>
-            <tr><th>Имя</th><th>кол-во учеников</th></tr>
+            <tr><th>Имя</th><th>Кол-во учеников</th><th>Планета обитания</th></tr>
             {% for djed in djedai %}
             <tr>
                 {% if djed.NumberPadawans >= filter %}
                 <td>{{ djed.name }}</td>
                 <td>{{ djed.NumberPadawans }}</td>
+                <td>{{ djed.planet.name }}</td>
                 {% endif %}
             </tr>
             {% endfor %}

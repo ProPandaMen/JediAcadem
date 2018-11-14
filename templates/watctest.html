@@ -19,7 +19,7 @@
     <font color="#D6AE01">
         <h2>{{ people.name }}</h2>
         <table>
-        <tr><th>Вопрос</th><th>Ответ</th></tr>
+        <tr><th>Вопрос</th><th>Ответ</th><th>Правильных ответов: {{ people.NumberPoints }}</th><th>Всего вопросов: {{ all }}</th></tr>
         {% for pepl in people.AnswersTest.split %}
             <tr>
             {% for qtest in test %}

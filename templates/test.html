@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест</title>
+</head>
+<body bgcolor="#181513">
+<font color="#D6AE01">
+    <center>
+    <form method="POST" action="test" >
+    {% csrf_token %}
+    {% for qtest in test %}
+        <fieldset>
+            <legend><p><b>{{ qtest.Question }}</b></p></legend>
+                 {% for vartest in qtest.Answer.splitlines %}
+                      <p><input name={{qtest.id}} type="radio" value={{vartest}} checked>{{vartest}}</p>
+                 {% endfor %}
+        </fieldset>
+    {% endfor %}
+        <input name="name" type="hidden" value={{ player }}>
+        <input type="submit" value="дальше" >
+    </form>
+    </center>
+</font>
+</body>
+</html>
+

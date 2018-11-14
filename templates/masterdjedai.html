@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Представьтесь</title>
+    <style type="text/css">
+    TABLE {
+    width: 300px;
+    border-collapse: collapse;
+    }
+    TD, TH {
+    padding: 7px;
+    border: 1px solid black;
+    }
+  </style>
+</head>
+<body bgcolor="#181513">
+<font color="#D6AE01">
+    <form method="POST" action="masterdjedaif">
+        {% csrf_token %}
+        <table>
+            <tr><th>мин кол-во учеников</th><th><input type="number" name="count" /></th></tr>
+            <tr><th colspan="2"><input type="submit" value="Применить" ></th></tr>
+        </table>
+    </form>
+    <center>
+    <form method="POST" action="masterdjedai">
+        {% csrf_token %}
+        <select id="djs" name="djedais">
+            {% for dj in djedai %}
+            <option value={{ dj.id}}>{{ dj.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Выбрать" >
+</form>
+        <table>
+            <tr><th>Имя</th><th>кол-во учеников</th></tr>
+            {% for djed in djedai %}
+            <tr>
+                {% if djed.NumberPadawans >= filter %}
+                <td>{{ djed.name }}</td>
+                <td>{{ djed.NumberPadawans }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+</center>
+</font>
+</body>
+</html>

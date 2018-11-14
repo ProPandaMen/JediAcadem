@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Для кандидатов</title>
+</head>
+<body  bgcolor="#181513">
+<font color="#D6AE01">
+    <center>
+    <form method="POST" action="candidate">
+        {% csrf_token %}
+        <p>
+            <label>Введите свою планету</label><br>
+            <select id="p" name="planet">
+                {% for pl in planet %}
+                <option>{{ pl.name }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>
+            <label>Введите email</label><br>
+            <input type="text" name="email" />
+        </p>
+        <p>
+            <label>Введите имя</label><br>
+            <input type="text" name="name" />
+        </p>
+        <p>
+            <label>Введите возраст</label><br>
+            <input type="number" name="age" />
+        </p>
+        <input type="submit" value="Далее" >
+    </form>
+</center>
+</font>
+</body>
+</html>

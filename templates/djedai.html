@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Для джедаев</title>
+    <style type="text/css">
+    TABLE {
+    width: 300px;
+    border-collapse: collapse;
+    }
+    TD, TH {
+    padding: 7px;
+    border: 1px solid black;
+    }
+  </style>
+</head>
+<body bgcolor="#181513">
+<font color="#D6AE01">
+    <form method="POST" action="djedaif">
+        {% csrf_token %}
+        <table>
+            <tr><th colspan="2">Фильтры для кандидатов</th></tr>
+            <tr><th>Имя</th><th><input type="text" name="NameFilter" /></th></tr>
+            <tr><th>мин возраст</th><th><input type="number" name="count" /></th></tr>
+            <tr><th colspan="2"><input type="submit" value="Применить" ></th></tr>
+        </table>
+        <input name="IdMasterDjedai" type="hidden" value={{spis}}>
+    </form>
+<center>
+        <h2>Список кандидатов</h2>
+        <table>
+        <tr><th>Имя</th><th>Возраст</th><th>тест</th><th>email</th></tr>
+        {% csrf_token %}
+        {% for person in people %}
+        <tr>
+            {% if person.planet == djedd %}
+                {% if FilterName in person.name and person.age >= FilterAge%}
+                       <td>{{ person.name }}</td>
+                       <td>{{ person.age }}</td>
+                       <td><a href="watchtest/{{person.id}}/">Резултат</a></td>
+                       <td>{{ person.email }}</td>
+                        {% if master.MaxNumberPadawans > master.NumberPadawans %}
+                          <td><a href="send/{{master.name}}/{{person.id}}/">Взять в падаваны</a></td>
+                        {% endif %}
+                {% endif %}
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</center>
+</font>
+</body>
+</html>

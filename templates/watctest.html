@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Результаты теста</title>
+    <style type="text/css">
+    TABLE {
+    width: 300px;
+    border-collapse: collapse;
+    }
+    TD, TH {
+    padding: 7px;
+    border: 1px solid black;
+    }
+  </style>
+</head>
+<body bgcolor="#181513">
+<center>
+    <font color="#D6AE01">
+        <h2>{{ people.name }}</h2>
+        <table>
+        <tr><th>Вопрос</th><th>Ответ</th></tr>
+        {% for pepl in people.AnswersTest.split %}
+            <tr>
+            {% for qtest in test %}
+                {% if pepl in qtest.Answer %}
+                     <td>{{ qtest.Question }}</td>
+                {% endif %}
+            {% endfor %}
+                <td>{{ pepl}}  </td>
+            </tr>
+        {% endfor %}
+    </table>
+    </font>
+</center>
+</body>
+</html>

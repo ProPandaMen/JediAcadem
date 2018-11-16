@@ -27,6 +27,7 @@ class Candidate(models.Model):
 class TestAnswer(models.Model):
     question = models.ForeignKey(TestQuestion, on_delete=models.CASCADE)
     answer = models.TextField()
+    correct_answer = models.BooleanField()
 
 
 

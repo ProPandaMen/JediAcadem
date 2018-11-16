@@ -9,15 +9,17 @@
     <center>
     <form method="POST" action="test" >
     {% csrf_token %}
-    {% for qtest in test %}
+    {% for numberA in Question %}
         <fieldset>
-            <legend><p><b>{{ qtest.Question }}</b></p></legend>
-                 {% for vartest in qtest.Answer.splitlines %}
-                      <p><input name={{qtest.id}} type="radio" value={{vartest}} checked>{{vartest}}</p>
-                 {% endfor %}
+            <legend><p><b>{{ numberA.question }}</b></p></legend>
+            {% for numberB in Answer %}
+            {% if numberB.question.question == numberA.question %}
+            <p><input name={{numberA.id}} type="radio" value={{numberB.id}} checked> {{ numberB.answer }} </p>
+            {% endif%}
+            {% endfor %}
         </fieldset>
     {% endfor %}
-        <input name="name" type="hidden" value={{ player }}>
+        <input name="name" type="hidden" value={{player}}>
         <input type="submit" value="дальше" >
     </form>
     </center>

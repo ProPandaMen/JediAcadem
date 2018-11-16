@@ -20,15 +20,16 @@
         <h2>{{ name }}</h2>
         <table>
         <tr><th>Вопрос</th><th>Ответ</th></tr>
-        {% for test in test_list %}
+            {% for test in test_list %}
             <tr>
                 {% if test.candidate_answer.id == id %}
                 <td>{{ test.test_question.question }}</td>
-                <td>{{ test.test_answer.answer }}  </td>
+                <td>{{ test.test_answer.answer }}</td>
                 {% endif %}
             </tr>
-        {% endfor %}
-    </table>
+            {% endfor %}
+            <tr><th>Всего вопросов: {{ question }}</th><th nowrap>Правильных: {{ answer }}</th></tr>
+        </table>
     </font>
 </center>
 </body>

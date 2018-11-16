@@ -23,6 +23,13 @@
             <tr><th>Имя</th><th><input type="text" name="NameFilter" /></th></tr>
             <tr><th>Мин возраст</th><th><input type="number" name="count" /></th></tr>
             <tr><th colspan="2"><input type="submit" value="Применить" ></th></tr>
+            <tr><th colspan="2">Прошлый запрос</th></tr>
+            {% if FilterName == "" %}
+              <tr><th>Имя</th><th>Null</th></tr>
+            {% else %}
+              <tr><th>Имя</th><th>{{ FilterName }}</th></tr>
+            {% endif %}
+            <tr><th>Возраст</th><th>{{ FilterAge }}</th></tr>
         </table>
         <input name="IdMasterDjedai" type="hidden" value={{spis}}>
     </form>
@@ -34,12 +41,12 @@
         {% for candidate in list_candidate %}
         <tr>
             {% if candidate.planet == jedi_planet %}
-              {% if candidate.jedi == null %}
-                 <td>{{ candidate.name }}</td>
-                 <td>{{ candidate.age }}</td>
-                 <td><a href="watchtest/{{candidate.id}}/">Резултат</a></td>
-                 <td>{{ candidate.email }}</td>
-                 <td><a href="send/{{master_jedi.id}}/{{candidate.id}}/">Взять в падаваны</a></td>
+              {% if candidate.jedi == null and FilterName in candidate.name and candidate.age >= FilterAge%}
+                  <td>{{ candidate.name }}</td>
+                  <td>{{ candidate.age }}</td>
+                  <td><a href="watchtest/{{candidate.id}}/">Резултат</a></td>
+                  <td>{{ candidate.email }}</td>
+                  <td><a href="send/{{master_jedi.id}}/{{candidate.id}}/">Взять в падаваны</a></td>
               {% endif %}
             {% endif %}
         </tr>

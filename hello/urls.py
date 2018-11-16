@@ -25,4 +25,6 @@ urlpatterns = [
     path('masterJedi', views.MasterJediMain),
     path('watchtest/<int:id>/', views.Watchtest),
     path('send/<str:name>/<int:id>/', views.SendMessage),
+    path('masterdJediF', views.MasterdJediF),
+    path('djedaif', views.JedaiF)
 ]

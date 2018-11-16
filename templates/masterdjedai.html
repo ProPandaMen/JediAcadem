@@ -16,31 +16,36 @@
 </head>
 <body bgcolor="#181513">
 <font color="#D6AE01">
-    <form method="POST" action="masterdjedaif">
+    <form method="POST" action="masterdJediF">
         {% csrf_token %}
         <table>
-            <tr><th>Мин кол-во учеников</th><th><input type="number" name="count" /></th></tr>
+            <tr><th>Мин кол-во учеников</th><th><input type="number" name="count" min="0"/></th></tr>
             <tr><th colspan="2"><input type="submit" value="Применить" ></th></tr>
+            <tr><th colspan="2">Последний запрос: {{ count_filter }}</tr>
         </table>
     </form>
     <center>
-
     <form method="POST" action="masterJedi">
         {% csrf_token %}
         <select id="djs" name="selected_jedi">
-            {% for jedi in list_jedi %}
+            {% for jedi in jedi_select %}
             <option value={{ jedi.id}}>{{ jedi.name }}</option>
             {% endfor %}
         </select>
         <input type="submit" value="Выбрать" >
     </form>
-
         <table>
-            <tr><th>Имя</th><th>Кол-во учеников</th><th>Планета обитания</th></tr>
+            <tr><th>Имя</th><th>Ученики</th><th>Планета обитания</th></tr>
             {% for jedi in list_jedi %}
             <tr>
                 <td>{{ jedi.name }}</td>
-                <td>{{ 0 }}</td>
+                <td nowrap>
+                {% for pupils in list_pupils %}
+                 {% if jedi == pupils.jedi %}
+                  {{ pupils.name }}<br>
+                 {% endif %}
+                {% endfor %}
+                </td>
                 <td>{{ jedi.planet.name }}</td>
             </tr>
             {% endfor %}

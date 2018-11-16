@@ -17,17 +17,15 @@
 <body bgcolor="#181513">
 <center>
     <font color="#D6AE01">
-        <h2>{{ people.name }}</h2>
+        <h2>{{ name }}</h2>
         <table>
-        <tr><th>Вопрос</th><th>Ответ</th><th>Правильных ответов: {{ people.NumberPoints }}</th><th>Всего вопросов: {{ all }}</th></tr>
-        {% for pepl in people.AnswersTest.split %}
+        <tr><th>Вопрос</th><th>Ответ</th></tr>
+        {% for test in test_list %}
             <tr>
-            {% for qtest in test %}
-                {% if pepl in qtest.Answer %}
-                     <td>{{ qtest.Question }}</td>
+                {% if test.candidate_answer.id == id %}
+                <td>{{ test.test_question.question }}</td>
+                <td>{{ test.test_answer.answer }}  </td>
                 {% endif %}
-            {% endfor %}
-                <td>{{ pepl}}  </td>
             </tr>
         {% endfor %}
     </table>

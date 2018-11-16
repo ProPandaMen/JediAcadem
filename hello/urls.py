@@ -20,12 +20,9 @@ from firstapp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
-    path('djedai', views.djedais),
-    path('candidate', views.candidate),
-    path('masterdjedai', views.masterdjedai),
-    path('test', views.tests),
-    path('send/<str:master>/<int:id>/', views.send),
-    path('watchtest/<int:id>/', views.watchtest),
-    path("masterdjedaif", views.masterdjedaif),
-    path("djedaif", views.djedaif),
+    path('candidate', views.CandidateMain),
+    path('test', views.TestMain),
+    path('masterJedi', views.MasterJediMain),
+    path('watchtest/<int:id>/', views.Watchtest),
+    path('send/<str:name>/<int:id>/', views.SendMessage),
 ]

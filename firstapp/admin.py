@@ -1,10 +1,16 @@
 from django.contrib import admin
+from .models import TestQuestion
+from .models import TestAnswer
 from .models import Planet
-from .models import djedai
-from .models import test
-from .models import candidat
+from .models import CandidateAnswer
+from .models import Jedi
+from .models import Candidate
 
-admin.site.register(candidat)
-admin.site.register(test)
-admin.site.register(djedai)
+
+admin.site.register(TestQuestion)
+admin.site.register(TestAnswer)
 admin.site.register(Planet)
+admin.site.register(CandidateAnswer)
+admin.site.register(Jedi)
+admin.site.register(Candidate)
+

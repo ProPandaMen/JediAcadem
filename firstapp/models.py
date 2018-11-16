@@ -1,32 +1,36 @@
 from django.db import models
 
 
-class test(models.Model):
-    Question = models.TextField()
-    Answer = models.TextField()
-    CorrectAnswer = models.TextField()
+class TestQuestion(models.Model):
+    question = models.TextField()
 
 
 class Planet(models.Model):
     name = models.CharField(max_length=20)
 
 
-class candidat(models.Model):
+class Jedi(models.Model):
+    planet = models.ForeignKey(Planet, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    max_number_pupils = models.IntegerField()
+
+
+class Candidate(models.Model):
+    jedi = models.ForeignKey(Jedi, blank=True, null=True,
+                             on_delete=models.SET_NULL)
     planet = models.CharField(max_length=20)
     email = models.CharField(max_length=50)
     name = models.CharField(max_length=50)
     age = models.IntegerField()
-    NumberPoints = models.IntegerField()
-    AnswersTest = models.TextField()
 
 
-class Person(models.Model):
-    name = models.CharField(max_length=20)
-    age = models.IntegerField()
+class TestAnswer(models.Model):
+    question = models.ForeignKey(TestQuestion, on_delete=models.CASCADE)
+    answer = models.TextField()
 
 
-class djedai(models.Model):
-    name = models.CharField(max_length=50)
-    planet = models.ForeignKey(Planet, on_delete=models.CASCADE)
-    NumberPadawans = models.IntegerField()
-    MaxNumberPadawans = models.IntegerField()
+
+class CandidateAnswer(models.Model):
+    test_question = models.ForeignKey(TestQuestion, on_delete=models.CASCADE)
+    test_answer = models.ForeignKey(TestAnswer, on_delete=models.CASCADE)
+    candidate_answer = models.ForeignKey(Candidate, on_delete=models.CASCADE)

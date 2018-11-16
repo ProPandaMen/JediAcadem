@@ -1,128 +1,82 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import HttpResponseNotFound
-from .models import Person
-from .models import candidat
+from .models import TestQuestion
+from .models import TestAnswer
 from .models import Planet
-from .models import djedai
-from .models import test
+from .models import CandidateAnswer
+from .models import Candidate
+from .models import Jedi
 from django.conf import settings
 from django.core.mail import send_mail
 
 
-def djedaif(request):
-    djed = request.POST.get("IdMasterDjedai")
-    listdjed = djedai.objects.get(id=djed).planet.name
-    master = djedai.objects.get(id=djed)
-    people = candidat.objects.all()
-    filterf = request.POST.get("count")
-    FilterName = request.POST.get("NameFilter")
-    if not filterf:
-        filterf = 0
-    elif not FilterName:
-        FilterName = ""
-    return render(request, "djedai.html", {"spis": djed, "people": people, 'djedd': listdjed,
-                                           'master': master, "FilterAge": int(filterf), "FilterName": str(FilterName)})
+def SendMessage(request, name, id):
+    persons = Candidate.objects.get(id=id)
+    jedi = Jedi.objects.get(id=name)
+    persons.jedi = jedi
+    persons.save()
+    letter = ('Мастер Джедай {0} взял к себе в ученики. Количество баллов за '
+              'тест. Поздравляю с вступление в орден и желаем дальнейших '
+              'успехов').format(jedi.name)
+    send_mail('Вы приняты в орден', letter, settings.EMAIL_HOST_USER,
+              [persons.email])
+    return HttpResponseNotFound(
+        "<h2>{0}, взял в падаваны {1}</h2>".format(jedi.name, persons.name))
 
+def Watchtest(request, id):
+    test_list = CandidateAnswer.objects.all()
+    candidate_name = Candidate.objects.get(id=id)
+    return render(request, "watctest.html", {"test_list": test_list, "id": id,
+                                             "name": candidate_name.name})
 
-def masterdjedaif(request):
+def MasterJediMain(request):
     if request.method == "POST":
-        filterf = request.POST.get("count")
-        djeda = djedai.objects.all()
-        return render(request, "masterdjedai.html", {"djedai": djeda, "filter": int(filterf)})
+        jedi = request.POST.get("selected_jedi")
+        jedi_planet = Jedi.objects.get(id=jedi).planet.name
+        master_jedi = Jedi.objects.get(id=jedi)
+        list_candidate = Candidate.objects.all()
+        return render(
+            request, "djedai.html", {'list_candidate': list_candidate,
+                                     'jedi_planet': jedi_planet,
+                                     'master_jedi': master_jedi})
+    list_jedi = Jedi.objects.all()
+    return render(request, "masterdjedai.html", {"list_jedi": list_jedi})
 
 
-def masterdjedai(request):
-    if request.method == "POST":
-        djed = request.POST.get("djedais")
-        listdjed = djedai.objects.get(id=djed).planet.name
-        master = djedai.objects.get(id=djed)
-        people = candidat.objects.all()
-        return render(request, "djedai.html", {"spis": djed, "people": people, 'djedd': listdjed,
-                                               'master': master, "FilterAge": 0, "FilterName": ""})
-    djeda = djedai.objects.all()
-    return render(request, "masterdjedai.html", {"djedai": djeda, "filter": 0})
-
-
-def watchtest(request, id):
-    try:
-        opentest = test.objects.all()
-        all = len(test.objects.all())
-        return render(request, "watctest.html", {"test": opentest, "people": candidat.objects.get(id=id), "all": all})
-    except Person.DoesNotExist:
-        return HttpResponseNotFound("<h2>Ошибка</h2>")
-
-
-def tests(request):
+def TestMain(request):
     if request.method == "POST":
         nameplayer = request.POST.get("name")
-        listtest = candidat.objects.get(id=int(nameplayer))
-        listtest.AnswersTest = ""
-        i = 0
-        for qtest in test.objects.all():
+        candidat = Candidate.objects.get(id=int(nameplayer))
+        for qtest in TestQuestion.objects.all():
             vartest = request.POST.get(str(qtest.id))
-            listtest.AnswersTest += vartest + " "
-            listtest.save()
-            if vartest in str(qtest.CorrectAnswer):
-                i = i + 1
-        if i < 1:
-            candidattest = candidat.objects.get(id=int(nameplayer))
-            candidattest.delete()
-        else:
-            candidattest = candidat.objects.get(id=int(nameplayer))
-            candidattest.NumberPoints = i
-            candidattest.save()
-        return render(request, "index.html")
+            atest = TestAnswer.objects.get(id=int(vartest))
+            CandidateAnswer.objects.create(
+                test_question=qtest, test_answer=atest,
+                candidate_answer=candidat)
+        return render(request, "Main.html")
 
 
-def candidate(request):
+def CandidateMain(request):
     if request.method == "POST":
-        tom = candidat()
-        tom.planet = request.POST.get("planet")
-        tom.email = request.POST.get("email")
-        tom.name = request.POST.get("name")
-        tom.age = request.POST.get("age")
-        tom.AnswerTrue = 0
-        tom.save()
-        starttest = test.objects.all()
-        return render(request, "test.html", {"test": starttest, "player": tom.id})
+        candidat = Candidate()
+        candidat.planet = request.POST.get("planet")
+        candidat.email = request.POST.get("email")
+        candidat.name = request.POST.get("name")
+        candidat.age = request.POST.get("age")
+        candidat.save()
+        test_question = TestQuestion.objects.all()
+        test_answer = TestAnswer.objects.all()
+        return render(request, "Test.html",
+                      {"player": candidat.id, "Question": test_question,
+                       "Answer": test_answer})
     planet = Planet.objects.all()
-    return render(request, "candidate.html", {"planet": planet})
+    return render(request, "Candidate.html", {"planet": planet})
 
 
-def djedais(request):
-    people = candidat.objects.all()
-    return render(request, "djedai.html", {"people": people})
-
-
-# получение данных из бд
 def index(request):
-    people = Person.objects.all()
-    return render(request, "index.html", {"people": people})
+    return render(request, "Main.html")
 
-
-def send(request, master, id):
-    persons = candidat.objects.get(id=id)
-    padavadjed = djedai.objects.get(name=master)
-    padavadjed.NumberPadawans += 1
-    padavadjed.save()
-    letter = (
-        'Мастер Джедай {0} взял к себе в ученики. Количество баллов за тест '
-        '{1}. Поздравляю с вступление в орден и желаем дальнейших успехов'
-    ).format(master, persons.NumberPoints)
-    send_mail('Вы приняты в орден', letter, settings.EMAIL_HOST_USER, [persons.email])
-    candidattest = candidat.objects.get(id=id)
-    candidattest.delete()
-    return HttpResponseNotFound("<h2>{0}, взял в падаваны {1}</h2>".format(master, persons.name))
-
-
-#def delete(request, email):
-    #try:
-        #person = candidat.objects.get(email=email)
-        #send_mail('Тестовое сообщение', 'Все работает', settings.EMAIL_HOST_USER, ['Stalker74369@yandex.ru'])
-        #return HttpResponseNotFound("<h2>{}</>".format(person))
-    #except Person.DoesNotExist:
-        #return HttpResponseNotFound("<h2>Person not found</>")
 
 
 

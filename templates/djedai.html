@@ -31,18 +31,16 @@
         <table>
         <tr><th>Имя</th><th>Возраст</th><th>тест</th><th>email</th></tr>
         {% csrf_token %}
-        {% for person in people %}
+        {% for candidate in list_candidate %}
         <tr>
-            {% if person.planet == djedd %}
-                {% if FilterName in person.name and person.age >= FilterAge%}
-                       <td>{{ person.name }}</td>
-                       <td>{{ person.age }}</td>
-                       <td><a href="watchtest/{{person.id}}/">Резултат</a></td>
-                       <td>{{ person.email }}</td>
-                        {% if master.MaxNumberPadawans > master.NumberPadawans %}
-                          <td><a href="send/{{master.name}}/{{person.id}}/">Взять в падаваны</a></td>
-                        {% endif %}
-                {% endif %}
+            {% if candidate.planet == jedi_planet %}
+              {% if candidate.jedi == null %}
+                 <td>{{ candidate.name }}</td>
+                 <td>{{ candidate.age }}</td>
+                 <td><a href="watchtest/{{candidate.id}}/">Резултат</a></td>
+                 <td>{{ candidate.email }}</td>
+                 <td><a href="send/{{master_jedi.id}}/{{candidate.id}}/">Взять в падаваны</a></td>
+              {% endif %}
             {% endif %}
         </tr>
         {% endfor %}

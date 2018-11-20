@@ -19,7 +19,7 @@
     <form method="POST" action="masterdJediF">
         {% csrf_token %}
         <table>
-            <tr><th>Мин кол-во учеников</th><th><input type="number" name="count" min="0"/></th></tr>
+            <tr><th>Мин кол-во учеников</th><th><input type="number" name="count" min="0" value={{ count_filter }}/></th></tr>
             <tr><th colspan="2"><input type="submit" value="Применить" ></th></tr>
             <tr><th colspan="2">Последний запрос: {{ count_filter }}</tr>
         </table>

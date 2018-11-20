@@ -20,11 +20,11 @@ from firstapp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
-    path('candidate', views.CandidateMain),
-    path('test', views.TestMain),
-    path('masterJedi', views.MasterJediMain),
-    path('watchtest/<int:id>/', views.Watchtest),
-    path('send/<str:name>/<int:id>/', views.SendMessage),
-    path('masterdJediF', views.MasterdJediF),
-    path('djedaif', views.JedaiF)
+    path('candidate', views.candidate_main),
+    path('test', views.test_main),
+    path('masterJedi', views.master_jedi_main),
+    path('watchtest/<int:id>/', views.watch_test),
+    path('send/<str:name>/<int:id>/', views.send_message),
+    path('masterdJediF', views.master_jedi_filter),
+    path('djedaif', views.jedi_filter)
 ]

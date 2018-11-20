@@ -30,7 +30,6 @@ class TestAnswer(models.Model):
     correct_answer = models.BooleanField()
 
 
-
 class CandidateAnswer(models.Model):
     test_question = models.ForeignKey(TestQuestion, on_delete=models.CASCADE)
     test_answer = models.ForeignKey(TestAnswer, on_delete=models.CASCADE)

@@ -80,14 +80,13 @@ def send_message(request, name, id):
         ).format(jedi.name, answer, question)
         send_mail('Вы приняты в орден', letter, settings.EMAIL_HOST_USER,
                   [persons.email])
-        return HttpResponseNotFound(
-            "<h2>{0}, взял в падаваны {1}</h2>".format(
-                jedi.name, persons.name
-            )
-        )
+        return render(request, "info.html", {
+            "text": "{0}, взял в падаваны {1}".format(jedi.name,
+                                                      persons.name)})
     else:
-        return HttpResponseNotFound(
-            "<h2>У вас максимум учеников</h2>")
+        return render(request, "info.html", {
+            "text": "У вас максимум учеников".format(jedi.name,
+                                                     persons.name)})
 
 
 def watch_test(request, id):
@@ -100,10 +99,11 @@ def watch_test(request, id):
             question += 1
             if test.test_answer.correct_answer:
                 answer += 1
-    return render(request, "watch_test.html", {"test_list": test_list, "id": id,
-                                             "name": candidate_name.name,
-                                             "answer": answer,
-                                             "question": question})
+    return render(request, "watch_test.html", {"test_list": test_list,
+                                               "id": id,
+                                               "name": candidate_name.name,
+                                               "answer": answer,
+                                               "question": question})
 
 
 def master_jedi_main(request):

@@ -19,9 +19,12 @@
     <form method="POST" action="masterdJediF">
         {% csrf_token %}
         <table>
-            <tr><th>Мин кол-во учеников</th><th><input type="number" name="count" min="0" value={{ count_filter }}/></th></tr>
+            {% if count_filter <= 0 %}
+            <tr><th>Мин кол-во учеников</th><th><input type="number" name="count" min="0"/></th></tr>
+            {% else %}
+            <tr><th>Мин кол-во учеников</th><th><input type="number" name="count" min="0" value="{{count_filter}}"/></th></tr>
+            {% endif %}
             <tr><th colspan="2"><input type="submit" value="Применить" ></th></tr>
-            <tr><th colspan="2">Последний запрос: {{ count_filter }}</tr>
         </table>
     </form>
     <center>
@@ -29,7 +32,7 @@
         {% csrf_token %}
         <select id="djs" name="selected_jedi">
             {% for jedi in jedi_select %}
-            <option value={{ jedi.id}}>{{ jedi.name }}</option>
+            <option value={{jedi.id}}>{{ jedi.name }}</option>
             {% endfor %}
         </select>
         <input type="submit" value="Выбрать" >

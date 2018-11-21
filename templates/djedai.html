@@ -20,16 +20,13 @@
         {% csrf_token %}
         <table>
             <tr><th colspan="2">Фильтры для кандидатов</th></tr>
-            <tr><th>Имя</th><th><input type="text" name="NameFilter" /></th></tr>
-            <tr><th>Мин возраст</th><th><input type="number" name="count" /></th></tr>
-            <tr><th colspan="2"><input type="submit" value="Применить" ></th></tr>
-            <tr><th colspan="2">Прошлый запрос</th></tr>
-            {% if FilterName == "" %}
-              <tr><th>Имя</th><th>Null</th></tr>
+            <tr><th>Имя</th><th><input type="text" name="NameFilter" value="{{FilterName}}"/></th></tr>
+            {% if FilterAge <= 0 %}
+            <tr><th>Мин возраст</th><th><input type="number" name="count"/></th></tr>
             {% else %}
-              <tr><th>Имя</th><th>{{ FilterName }}</th></tr>
+            <tr><th>Мин возраст</th><th><input type="number" name="count" value="{{FilterAge}}"/></th></tr>
             {% endif %}
-            <tr><th>Возраст</th><th>{{ FilterAge }}</th></tr>
+            <tr><th colspan="2"><input type="submit" value="Применить"></th></tr>
         </table>
         <input name="IdMasterDjedai" type="hidden" value={{spis}}>
     </form>

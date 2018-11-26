@@ -3,33 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <title>Для кандидатов</title>
+    <style type="text/css">
+    HEADER {
+    width: 100%; height: 70px;
+    background: #181513; /*  фона */
+    border: 2px solid #fc0; /* рамка */
+    }
+    H2 {
+    font-size: 150%;
+    }
+    TABLE {
+    margin-top: 10%;
+    width: 300px;
+    border-collapse: collapse;
+    }
+    TD, TH {
+    padding: 10px;
+    border: 2px solid #fc0;
+    white-space: nowrap;
+    }
+</style>
 </head>
 <body  bgcolor="#181513">
 <font color="#D6AE01">
+     <header>
+        <center>
+            <h2 onclick="window.location='/index'">
+                STAR WARS
+            </h2>
+        </center>
+    </header>
     <center>
     <form method="POST" action="candidate">
         {% csrf_token %}
-        <p>
-            <label>Введите свою планету</label><br>
-            <select id="p" name="planet">
-                {% for pl in planet %}
-                <option>{{ pl.name }}</option>
-                {% endfor %}
-            </select>
-        </p>
-        <p>
-            <label>Введите email</label><br>
-            <input type="text" name="email" />
-        </p>
-        <p>
-            <label>Введите имя</label><br>
-            <input type="text" name="name" />
-        </p>
-        <p>
-            <label>Введите возраст</label><br>
-            <input type="number" name="age" />
-        </p>
-        <input type="submit" value="Далее" >
+        <table>
+            <tr>
+                <td colspan="2" align="center">
+                    Заполните форму
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Введите свою планету</label><br>
+                </td>
+                <td>
+                    <select id="p" name="planet">
+                        {% for pl in planet %}
+                        <option>{{ pl.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Введите email</label><br>
+                </td>
+                <td>
+                    <input type="text" name="email" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Введите имя</label><br>
+                </td>
+                <td>
+                    <input type="text" name="name" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Введите возраст</label><br>
+                </td>
+                <td>
+                    <input type="number" name="age" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <input type="submit" value="Далее" >
+                </td>
+            </tr>
+        </table>
     </form>
 </center>
 </font>

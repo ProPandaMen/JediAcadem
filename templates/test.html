@@ -8,17 +8,17 @@
 <font color="#D6AE01">
     <center>
     <form method="POST" action="test" >
-    {% csrf_token %}
-    {% for numberA in Question %}
+        {% csrf_token %}
+        {% for Question in Questions %}
         <fieldset>
-            <legend><p><b>{{ numberA.question }}</b></p></legend>
-            {% for numberB in Answer %}
-            {% if numberB.question.question == numberA.question %}
-            <p><input name={{numberA.id}} type="radio" value={{numberB.id}} checked> {{ numberB.answer }} </p>
+            <legend><p><b>{{ Question.text }}</b></p></legend>
+            {% for Answer in Answers %}
+            {% if Answer.question == Question %}
+            <p><input name={{Question.id}} type="radio" value={{Answer.id}} checked> {{ Answer.text }} </p>
             {% endif%}
             {% endfor %}
         </fieldset>
-    {% endfor %}
+        {% endfor %}
         <input name="name" type="hidden" value={{player}}>
         <input type="submit" value="дальше" >
     </form>

@@ -2,7 +2,7 @@ from django.db import models
 
 
 class TestQuestion(models.Model):
-    question = models.TextField()
+    text = models.TextField()
 
 
 class Planet(models.Model):
@@ -26,11 +26,11 @@ class Candidate(models.Model):
 
 class TestAnswer(models.Model):
     question = models.ForeignKey(TestQuestion, on_delete=models.CASCADE)
-    answer = models.TextField()
+    text = models.TextField()
     correct_answer = models.BooleanField()
 
 
 class CandidateAnswer(models.Model):
     test_question = models.ForeignKey(TestQuestion, on_delete=models.CASCADE)
     test_answer = models.ForeignKey(TestAnswer, on_delete=models.CASCADE)
-    candidate_answer = models.ForeignKey(Candidate, on_delete=models.CASCADE)
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)

@@ -4,52 +4,59 @@
     <meta charset="UTF-8">
     <title>Для джедаев</title>
     <style type="text/css">
+    HEADER {
+    width: 100%; height: 70px;
+    background: #181513; /*  фона */
+    border: 2px solid #fc0; /* рамка */
+    }
+    H2 {
+    font-size: 150%;
+    }
     TABLE {
     width: 300px;
     border-collapse: collapse;
     }
     TD, TH {
     padding: 7px;
-    border: 1px solid black;
+    border: 2px solid #fc0;
     }
   </style>
 </head>
 <body bgcolor="#181513">
 <font color="#D6AE01">
-    <form method="POST" action="djedaif">
+    <header>
+        <center>
+            <h2 onclick="window.location='/index'">
+                STAR WARS
+            </h2>
+        </center>
+    </header>
+    <form method="POST" action="djedai">
         {% csrf_token %}
         <table>
             <tr><th colspan="2">Фильтры для кандидатов</th></tr>
-            <tr><th>Имя</th><th><input type="text" name="NameFilter" value="{{FilterName}}"/></th></tr>
-            {% if FilterAge <= 0 %}
-            <tr><th>Мин возраст</th><th><input type="number" name="count"/></th></tr>
-            {% else %}
-            <tr><th>Мин возраст</th><th><input type="number" name="count" value="{{FilterAge}}"/></th></tr>
-            {% endif %}
+            <tr><th>Имя</th><th><input type="text" name="name_filter" value="{{FilterName}}"/></th></tr>
+            <tr><th>Мин возраст</th><th><input type="number" name="age_filter" value="{{FilterAge}}"/></th></tr>
             <tr><th colspan="2"><input type="submit" value="Применить"></th></tr>
         </table>
-        <input name="IdMasterDjedai" type="hidden" value={{spis}}>
+        <center>
+            <input type="hidden" name="selected_jedi" value="{{master_jedi}}">
+            <h2>Список кандидатов</h2>
+            <table>
+                <tr><th>Имя</th><th>Возраст</th><th>тест</th><th>email</th></tr>
+                {% csrf_token %}
+                {% for candidate in list_candidate %}
+                <tr>
+                    <td>{{ candidate.name }}</td>
+                    <td>{{ candidate.age }}</td>
+                    <td><a href="watchtest/{{candidate.id}}/">Резултат</a></td>
+                    <td>{{ candidate.email }}</td>
+                    <td><a href="send/{{master_jedi}}/{{candidate.id}}/">Взять в падаваны</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </center>
     </form>
-<center>
-        <h2>Список кандидатов</h2>
-        <table>
-        <tr><th>Имя</th><th>Возраст</th><th>тест</th><th>email</th></tr>
-        {% csrf_token %}
-        {% for candidate in list_candidate %}
-        <tr>
-            {% if candidate.planet == jedi_planet %}
-              {% if candidate.jedi == null and FilterName in candidate.name and candidate.age >= FilterAge%}
-                  <td>{{ candidate.name }}</td>
-                  <td>{{ candidate.age }}</td>
-                  <td><a href="watchtest/{{candidate.id}}/">Резултат</a></td>
-                  <td>{{ candidate.email }}</td>
-                  <td><a href="send/{{master_jedi.id}}/{{candidate.id}}/">Взять в падаваны</a></td>
-              {% endif %}
-            {% endif %}
-        </tr>
-        {% endfor %}
-    </table>
-</center>
 </font>
 </body>
 </html>

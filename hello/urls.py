@@ -22,9 +22,9 @@ urlpatterns = [
     path('', views.index),
     path('candidate', views.candidate_main),
     path('test', views.test_main),
-    path('masterJedi', views.master_jedi_main),
-    path('watchtest/<int:id>/', views.watch_test),
-    path('send/<str:name>/<int:id>/', views.send_message),
-    path('masterdJediF', views.master_jedi_filter),
-    path('djedaif', views.jedi_filter)
+    path('masterJedi', views.master_jedi_from),
+    path('watchtest/<int:candidate_id>/', views.watch_test),
+    path('send/<int:jedi_id>/<int:candidate_id>/', views.send_message),
+    path('djedai', views.jedi_from),
+    path('index', views.index)
 ]

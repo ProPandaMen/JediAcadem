@@ -55,7 +55,7 @@ def master_jedi_from(request):
 
 def send_message(request, jedi_id, candidate_id):
     list_pupils = Candidate.objects.all()
-    candidate = Candidate.objects.get(id=candidate_id)
+    candidate = list_pupils.get(id=candidate_id)
     jedi = Jedi.objects.get(id=jedi_id)
     number_of_students = 0
     for pupils in list_pupils:
@@ -64,9 +64,9 @@ def send_message(request, jedi_id, candidate_id):
 
     if number_of_students < jedi.max_number_pupils:
         test_list = CandidateAnswer.objects.all()
-        question = test_list.count()
-        answer = test_list.filter(test_answer__correct_answer__exact=
-                                  True).count()
+        question = test_list.filter(candidate__id__exact=candidate_id).count()
+        answer = test_list.filter(test_answer__correct_answer__exact=True,
+                                  candidate__id__exact=candidate_id).count()
         candidate.jedi = jedi
         candidate.save()
         letter = (

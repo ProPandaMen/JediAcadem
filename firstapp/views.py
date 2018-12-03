@@ -11,20 +11,20 @@ from django.core.mail import send_mail
 
 
 def jedi_from(request):
-    filter_name = request.POST.get("name_filter", "")
-    filter_age = request.POST.get("age_filter", 0)
-    jedi = request.POST.get("selected_jedi")
-    jedi_planet = Jedi.objects.get(id=jedi).planet
-    list_candidate = Candidate.objects.all().filter(
-        name__icontains=filter_name,
-        age__gte=filter_age,
-        planet=jedi_planet,
-        jedi__isnull=True
-    )
-    return render(request, "djedai.html", {'list_candidate': list_candidate,
-                                           'master_jedi': jedi,
-                                           'filter_name': filter_name,
-                                           'filter_age': filter_age})
+    """
+    Выводит для Джедая список возможных ему учеников, где он может взять
+    кого-то к себе в ученики или посмотреть его ответы за тест.
+    """
+    jedi = request.POST.get('selected_jedi')
+    context = ({'selected_jedi': jedi,
+                'filter_name': request.POST.get('name_filter', ''),
+                'filter_age': request.POST.get('age_filter', 0),
+                'list_candidate': Candidate.objects.all().filter(
+                    name__icontains=request.POST.get('name_filter', ''),
+                    age__gte=request.POST.get('age_filter', 0),
+                    planet=Jedi.objects.get(id=jedi).planet,
+                    jedi__isnull=True)})
+    return render(request, "djedai.html", context)
 
 
 def master_jedi_from(request):
@@ -33,17 +33,23 @@ def master_jedi_from(request):
     Если через фильтр указано мин. кол-во учеников, то выводятся только такие
     джедаи.
     """
-    min_pupils = request.POST.get('count', 0)
+    min_pupils = request.POST.get('min_number_of_students', 0)
     all_jedi = Jedi.objects.all()
     list_jedi = Jedi.objects.annotate(Count('candidate')).filter(
         candidate__count__gte=min_pupils
     )
     return render(request, 'master_jedai.html', {'list_jedi': list_jedi,
                                                  'all_jedi': all_jedi,
-                                                 'count_filter': min_pupils})
+                                                 'min_number_of_students':
+                                                     min_pupils})
 
 
 def send_message(request, jedi_id, candidate_id):
+    """
+    Проверят есть ли у джедая места для учеников, если да то отправляет
+    кандидату письмо с поздравлениями, если нет пишет джедаю что у него макс
+    учеников.
+    """
     candidate = Candidate.objects.get(id=candidate_id)
     jedi = Jedi.objects.get(id=jedi_id)
     number_of_candidate = Jedi.objects.filter(id=jedi_id).aggregate(
@@ -80,18 +86,13 @@ def watch_test(request, candidate_id):
     и количество вопросов
     """
     test_list = CandidateAnswers.objects.all().filter(candidate=candidate_id)
-    candidate = Candidate.objects.get(id__exact=candidate_id)
-    number_of_questions = test_list.count()
-    number_of_answer = test_list.filter(test_answer__is_correct_answer__exact=
-                              True).count()
-    return render(request, "watch_test.html", {"test_list": test_list,
-                                               "candidate_name":
-                                                   candidate.name,
-                                               "number_of_answer":
-                                                   number_of_answer,
-                                               "number_of_questions":
-                                                   number_of_questions}
-                  )
+    context = ({"test_list": test_list,
+                "candidate_name": Candidate.objects.get(
+                    id__exact=candidate_id).name,
+                "number_of_answer": test_list.filter(
+                    test_answer__is_correct_answer__exact=True).count(),
+                "number_of_questions": test_list.count()})
+    return render(request, "watch_test.html", context)
 
 
 def test_main(request):

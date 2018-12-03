@@ -33,7 +33,7 @@
     </header>
     <form method="POST" action="masterJedi">{% csrf_token %}
         <table>
-            <tr><th>Мин кол-во учеников</th><th><input type="number" name="count" min="0" value="{{count_filter}}"/></th></tr>
+            <tr><th>Мин кол-во учеников</th><th><input type="number" name="min_number_of_students" min="0" value="{{min_number_of_students}}"/></th></tr>
             <tr><th colspan="2"><input type="submit" value="Применить" ></th></tr>
         </table>
     </form>

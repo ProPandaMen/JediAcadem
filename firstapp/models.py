@@ -18,7 +18,7 @@ class Jedi(models.Model):
 class Candidate(models.Model):
     jedi = models.ForeignKey(Jedi, blank=True, null=True,
                              on_delete=models.SET_NULL)
-    planet = models.CharField(max_length=20)
+    planet = models.ForeignKey(Planet, on_delete=models.CASCADE)
     email = models.CharField(max_length=50)
     name = models.CharField(max_length=50)
     age = models.IntegerField()
@@ -27,10 +27,10 @@ class Candidate(models.Model):
 class TestAnswer(models.Model):
     question = models.ForeignKey(TestQuestion, on_delete=models.CASCADE)
     text = models.TextField()
-    correct_answer = models.BooleanField()
+    is_correct_answer = models.BooleanField()
 
 
-class CandidateAnswer(models.Model):
+class CandidateAnswers(models.Model):
     test_question = models.ForeignKey(TestQuestion, on_delete=models.CASCADE)
     test_answer = models.ForeignKey(TestAnswer, on_delete=models.CASCADE)
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)

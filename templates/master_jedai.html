@@ -23,7 +23,7 @@
   </style>
 </head>
 <body bgcolor="#181513">
-<font color="#D6AE01">
+<font color="#c0c0c0">
     <header>
         <center>
             <h2 onclick="window.location='/index'">
@@ -31,20 +31,18 @@
             </h2>
         </center>
     </header>
-    <form method="POST" action="masterJedi">
-        {% csrf_token %}
+    <form method="POST" action="masterJedi">{% csrf_token %}
         <table>
             <tr><th>Мин кол-во учеников</th><th><input type="number" name="count" min="0" value="{{count_filter}}"/></th></tr>
             <tr><th colspan="2"><input type="submit" value="Применить" ></th></tr>
         </table>
     </form>
-    <form method="POST" action="djedai">
+    <form method="POST" action="djedai">{% csrf_token %}
         <center>
             <table>
                 <tr><th colspan="3">
-                    {% csrf_token %}
                     <select id="djs" name="selected_jedi">
-                        {% for jedi in jedi_select %}
+                        {% for jedi in all_jedi %}
                         <option value={{jedi.id}}>{{ jedi.name }}</option>
                         {% endfor %}
                     </select>
@@ -55,10 +53,8 @@
                 <tr>
                     <td>{{ jedi.name }}</td>
                     <td nowrap>
-                        {% for pupils in list_pupils %}
-                         {% if jedi == pupils.jedi %}
+                        {% for pupils in  jedi.candidate_set.all %}
                           {{ pupils.name }}<br>
-                         {% endif %}
                         {% endfor %}
                     </td>
                     <td>{{ jedi.planet.name }}</td>

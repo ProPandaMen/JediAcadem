@@ -23,7 +23,7 @@
   </style>
 </head>
 <body bgcolor="#181513">
-<font color="#D6AE01">
+<font color="#c0c0c0">
     <header>
         <center>
             <h2 onclick="window.location='/index'">
@@ -31,8 +31,7 @@
             </h2>
         </center>
     </header>
-    <form method="POST" action="djedai">
-        {% csrf_token %}
+    <form method="POST" action="djedai">{% csrf_token %}
         <table>
             <tr><th colspan="2">Фильтры для кандидатов</th></tr>
             <tr><th>Имя</th><th><input type="text" name="name_filter" value="{{FilterName}}"/></th></tr>

@@ -1,8 +1,9 @@
+from django.db.models import Count
 from django.shortcuts import render
 from .models import TestQuestion
 from .models import TestAnswer
 from .models import Planet
-from .models import CandidateAnswer
+from .models import CandidateAnswers
 from .models import Candidate
 from .models import Jedi
 from django.conf import settings
@@ -21,8 +22,8 @@ def jedi_from(request):
     list_candidate = Candidate.objects.all().filter(
         name__icontains=filter_name,
         age__gte=filter_age,
-        planet__icontains=jedi_planet,
-        jedi__exact=None
+        planet=jedi_planet,
+        jedi__isnull=True
     )
     return render(request, "djedai.html", {'list_candidate': list_candidate,
                                            'master_jedi': jedi,
@@ -31,49 +32,41 @@ def jedi_from(request):
 
 
 def master_jedi_from(request):
-    min_pupils = request.POST.get("count")
-    if not min_pupils:
-        min_pupils = 0
-    for_jedi = Jedi.objects.all()
-    for_candidate = Candidate.objects.all()
-    list_jedi = []
-    for jedi in for_jedi:
-        i = 0
-        for candidate in for_candidate:
-            if candidate.jedi == jedi:
-                i = i + 1
-                if int(min_pupils) <= i:
-                    list_jedi.append(jedi)
-    list_pupils = Candidate.objects.all()
-    if int(min_pupils) <= 0:
-        list_jedi = for_jedi
-    return render(request, "master_jedai.html", {"list_jedi": list_jedi,
-                                                 "list_pupils": list_pupils,
-                                                 "jedi_select": for_jedi,
-                                                 "count_filter": min_pupils})
+    """
+    Выводится список джедаев и их учеников.
+    Если через фильтр указано мин. кол-во учеников, то выводятся только такие
+    джедаи.
+    """
+    min_pupils = request.POST.get('count', 0)
+    all_jedi = Jedi.objects.all()
+    list_jedi = Jedi.objects.annotate(Count('candidate')).filter(
+        candidate__count__gte=min_pupils
+    )
+    return render(request, 'master_jedai.html', {'list_jedi': list_jedi,
+                                                 'all_jedi': all_jedi,
+                                                 'count_filter': min_pupils})
 
 
 def send_message(request, jedi_id, candidate_id):
-    list_pupils = Candidate.objects.all()
-    candidate = list_pupils.get(id=candidate_id)
+    candidate = Candidate.objects.get(id=candidate_id)
     jedi = Jedi.objects.get(id=jedi_id)
-    number_of_students = 0
-    for pupils in list_pupils:
-        if jedi == pupils.jedi:
-            number_of_students += 1
+    number_of_candidate = Jedi.objects.filter(id=jedi_id).aggregate(
+        Count('candidate'))
 
-    if number_of_students < jedi.max_number_pupils:
-        test_list = CandidateAnswer.objects.all()
-        question = test_list.filter(candidate__id__exact=candidate_id).count()
-        answer = test_list.filter(test_answer__correct_answer__exact=True,
-                                  candidate__id__exact=candidate_id).count()
+    if number_of_candidate['candidate__count'] < jedi.max_number_pupils:
+        test_list = CandidateAnswers.objects.all()
+        number_of_questions = test_list.filter(candidate_id=candidate_id
+                                               ).count()
+        number_of_answers = test_list.filter(test_answer__correct_answer=True,
+                                             candidate__id=candidate_id
+                                             ).count()
         candidate.jedi = jedi
         candidate.save()
         letter = (
             'Мастер Джедай {0} взял к себе в ученики. Количество правильных '
             'ответов за тест {1} из {2} вопросов. Поздравляю с вступление в '
             'орден и желаем дальнейших успехов'
-        ).format(jedi.name, answer, question)
+        ).format(jedi.name, number_of_answers, number_of_questions)
         send_mail('Вы приняты в орден', letter, settings.EMAIL_HOST_USER,
                   [candidate.email])
         return render(request, "info.html", {
@@ -86,7 +79,11 @@ def send_message(request, jedi_id, candidate_id):
 
 
 def watch_test(request, candidate_id):
-    test_list = CandidateAnswer.objects.all().filter(candidate=candidate_id)
+    """
+    Выводит ответы за тест выбранного кандидата, количество правильных ответов
+    и количество вопросов
+    """
+    test_list = CandidateAnswers.objects.all().filter(candidate=candidate_id)
     candidate_name = Candidate.objects.get(id__exact=candidate_id)
     question = test_list.count()
     answer = test_list.filter(test_answer__correct_answer__exact=True).count()
@@ -99,18 +96,22 @@ def watch_test(request, candidate_id):
 
 def test_main(request):
     if request.method == "POST":
-        name_candidate = request.POST.get("name")
-        id_candidate = Candidate.objects.get(id=name_candidate)
+        id_candidate = request.POST.get("candidate_id")
         for test_question in TestQuestion.objects.all():
             selected_option = request.POST.get(str(test_question.id))
             test_answer = TestAnswer.objects.get(id=int(selected_option))
-            CandidateAnswer.objects.create(
+            CandidateAnswers.objects.create(
                 test_question=test_question, test_answer=test_answer,
-                candidate=id_candidate)
+                candidate_id=id_candidate)
         return render(request, "main.html")
 
 
 def candidate_main(request):
+    """
+    Выводит на экран 4 поля: планета, email, имя, возраст. После заполнения
+    всех пополей и нажатия на кнопку Далее, открывает окно теста, где написанны
+    вопросы и к ним варианты ответов.
+    """
     if request.method == "POST":
         candidate = Candidate()
         candidate.planet = request.POST.get("planet")
@@ -121,11 +122,14 @@ def candidate_main(request):
         test_question = TestQuestion.objects.all()
         test_answer = TestAnswer.objects.all()
         return render(request, "test.html",
-                      {"player": candidate.id, "Questions": test_question,
+                      {"candidate": candidate.id, "Questions": test_question,
                        "Answers": test_answer})
     planet = Planet.objects.all()
     return render(request, "candidate.html", {"planet": planet})
 
 
 def index(request):
+    """
+    Выводит на экран 2 кнопки: Для Джедаи, Для кандидата.
+    """
     return render(request, "main.html")

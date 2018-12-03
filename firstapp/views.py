@@ -11,14 +11,10 @@ from django.core.mail import send_mail
 
 
 def jedi_from(request):
-    filter_name = request.POST.get("name_filter")
-    filter_age = request.POST.get("age_filter")
+    filter_name = request.POST.get("name_filter", "")
+    filter_age = request.POST.get("age_filter", 0)
     jedi = request.POST.get("selected_jedi")
-    if not filter_name:
-        filter_name = ""
-    if not filter_age:
-        filter_age = 0
-    jedi_planet = Jedi.objects.get(id=jedi).planet.name
+    jedi_planet = Jedi.objects.get(id=jedi).planet
     list_candidate = Candidate.objects.all().filter(
         name__icontains=filter_name,
         age__gte=filter_age,
@@ -27,8 +23,8 @@ def jedi_from(request):
     )
     return render(request, "djedai.html", {'list_candidate': list_candidate,
                                            'master_jedi': jedi,
-                                           'FilterName': filter_name,
-                                           'FilterAge': filter_age})
+                                           'filter_name': filter_name,
+                                           'filter_age': filter_age})
 
 
 def master_jedi_from(request):
@@ -57,8 +53,8 @@ def send_message(request, jedi_id, candidate_id):
         test_list = CandidateAnswers.objects.all()
         number_of_questions = test_list.filter(candidate_id=candidate_id
                                                ).count()
-        number_of_answers = test_list.filter(test_answer__correct_answer=True,
-                                             candidate__id=candidate_id
+        number_of_answers = test_list.filter(test_answer__is_correct_answer=
+                                             True, candidate__id=candidate_id
                                              ).count()
         candidate.jedi = jedi
         candidate.save()
@@ -84,26 +80,32 @@ def watch_test(request, candidate_id):
     и количество вопросов
     """
     test_list = CandidateAnswers.objects.all().filter(candidate=candidate_id)
-    candidate_name = Candidate.objects.get(id__exact=candidate_id)
-    question = test_list.count()
-    answer = test_list.filter(test_answer__correct_answer__exact=True).count()
+    candidate = Candidate.objects.get(id__exact=candidate_id)
+    number_of_questions = test_list.count()
+    number_of_answer = test_list.filter(test_answer__is_correct_answer__exact=
+                              True).count()
     return render(request, "watch_test.html", {"test_list": test_list,
-                                               "id": candidate_id,
-                                               "name": candidate_name.name,
-                                               "answer": answer,
-                                               "question": question})
+                                               "candidate_name":
+                                                   candidate.name,
+                                               "number_of_answer":
+                                                   number_of_answer,
+                                               "number_of_questions":
+                                                   number_of_questions}
+                  )
 
 
 def test_main(request):
-    if request.method == "POST":
-        id_candidate = request.POST.get("candidate_id")
-        for test_question in TestQuestion.objects.all():
-            selected_option = request.POST.get(str(test_question.id))
-            test_answer = TestAnswer.objects.get(id=int(selected_option))
-            CandidateAnswers.objects.create(
-                test_question=test_question, test_answer=test_answer,
-                candidate_id=id_candidate)
-        return render(request, "main.html")
+    """
+    Выводит перед кандидатов список вопроов с вариантами ответов
+    """
+    id_candidate = request.POST.get("candidate_id")
+    for test_question in TestQuestion.objects.all():
+        selected_option = request.POST.get(str(test_question.id))
+        test_answer = TestAnswer.objects.get(id=int(selected_option))
+        CandidateAnswers.objects.create(test_question=test_question,
+                                        test_answer=test_answer,
+                                        candidate_id=id_candidate)
+    return render(request, "main.html")
 
 
 def candidate_main(request):
@@ -113,16 +115,16 @@ def candidate_main(request):
     вопросы и к ним варианты ответов.
     """
     if request.method == "POST":
-        candidate = Candidate()
-        candidate.planet = request.POST.get("planet")
-        candidate.email = request.POST.get("email")
-        candidate.name = request.POST.get("name")
-        candidate.age = request.POST.get("age")
-        candidate.save()
+        candidate = Candidate.objects.create(
+            planet_id=request.POST.get("planet"),
+            email=request.POST.get("email"),
+            name=request.POST.get("name"),
+            age=request.POST.get("age"),
+        )
         test_question = TestQuestion.objects.all()
         test_answer = TestAnswer.objects.all()
         return render(request, "test.html",
-                      {"candidate": candidate.id, "Questions": test_question,
+                      {"candidate_id": candidate.id, "Questions": test_question,
                        "Answers": test_answer})
     planet = Planet.objects.all()
     return render(request, "candidate.html", {"planet": planet})

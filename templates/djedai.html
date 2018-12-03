@@ -34,8 +34,8 @@
     <form method="POST" action="djedai">{% csrf_token %}
         <table>
             <tr><th colspan="2">Фильтры для кандидатов</th></tr>
-            <tr><th>Имя</th><th><input type="text" name="name_filter" value="{{FilterName}}"/></th></tr>
-            <tr><th>Мин возраст</th><th><input type="number" name="age_filter" value="{{FilterAge}}"/></th></tr>
+            <tr><th>Имя</th><th><input type="text" name="name_filter" value="{{filter_name}}"/></th></tr>
+            <tr><th>Мин возраст</th><th><input type="number" name="age_filter" value="{{filter_age}}"/></th></tr>
             <tr><th colspan="2"><input type="submit" value="Применить"></th></tr>
         </table>
         <center>

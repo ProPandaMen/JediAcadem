@@ -47,8 +47,8 @@
                 </td>
                 <td>
                     <select id="p" name="planet">
-                        {% for pl in planet %}
-                        <option>{{ pl.name }}</option>
+                        {% for p in planet %}
+                        <option value={{p.id}}>{{ p.name }}</option>
                         {% endfor %}
                     </select>
                 </td>

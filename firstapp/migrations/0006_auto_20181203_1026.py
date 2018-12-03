@@ -41,5 +41,4 @@ class Migration(migrations.Migration):
             name='planet',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='firstapp.Planet'),
         ),
-        migrations.RunPython(rename_planet, 1),
     ]
